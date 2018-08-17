@@ -162,7 +162,7 @@ class EmagCrawler
      * Be carefull tho' because the files will get re-written each time this runs because of the 'w' option.
      */
 
-    function findPricesLowerThan($minLimit, $maxLimit, $priceList, $linkList, $file = null)
+    function findPricesBetween($minLimit, $maxLimit, $priceList, $linkList, $file = null)
     {
         $counter = 0;
         $viableResults = 0;
@@ -191,5 +191,32 @@ class EmagCrawler
         if (isset($file)) {
             fclose($handle);
         }
+    }
+/**
+ * This will return ALL of the viable category links that emag has.
+ * It can be used in a loop to search for things found in ALL of the categories
+ * @return Array $categoryLinks
+ */
+    function getCategories() 
+    {
+        $categoryLinks = [];
+        $html = new simple_html_dom();
+
+        $context = stream_context_create(array(
+            'http' => array(
+                'header' => array('User-Agent: Mozilla/5.0 (Windows; U; Windows NT 6.1; rv:2.2) Gecko/20110201'),
+            ),
+        ));
+
+        $html->load_file('https://www.emag.ro/all-departments', false, $context);
+
+        foreach ($html->find('#department-expanded ul li a') as $category) {
+            if (strstr($category->href, '/c') == false) {
+                continue;
+            }
+            $categoryLink = 'https://www.emag.ro' . strstr($category->href, '?', true);
+            array_push($categoryLinks, $categoryLink);
+        }
+        return $categoryLinks;
     }
 }

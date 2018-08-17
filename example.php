@@ -8,13 +8,26 @@ require 'EmagCrawler.php';
 
 $emagCrawler = new EmagCrawler();
 
-$minLimit = $argv[1];
-$maxLimit = $argv[2];
-$link = $argv[3];
+$minLimit = 100;
+$maxLimit = 200;
+$link = 'https://www.emag.ro/laptopuri-accesorii/c';
 
 $maxPageNumber = $emagCrawler->getPages($link);
 $priceList = $emagCrawler -> getPrices($link, $maxPageNumber);
 $linkList = $emagCrawler -> getLinks($link, $maxPageNumber);
 
-$emagCrawler -> findPricesLowerThan($minLimit,$maxLimit,$priceList, $linkList, 'test.txt');
+$emagCrawler -> findPricesBetween($minLimit,$maxLimit,$priceList, $linkList, 'test.txt');
+
+/**
+ * Example of how to search for items in that price range in ALL of the categories
+ */
+// $categories = $emagCrawler->getCategories();
+
+// foreach ($categories as $categoryLink) {
+//     echo 'Checking Link ' . $categoryLink . PHP_EOL;
+//     $maxPageNumber = $emagCrawler->getPages($categoryLink);
+//     $priceList = $emagCrawler -> getPrices($categoryLink, $maxPageNumber);
+//     $linkList = $emagCrawler -> getLinks($categoryLink, $maxPageNumber);
+//     $emagCrawler -> findPricesBetween(100,200,$priceList, $linkList, 'test.txt');
+// }
 
